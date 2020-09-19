@@ -180,6 +180,20 @@ class RsServiceTest {
                 });
     }
 
+    @Test
+    void shouldAddTrade() {
+        // given
+        when(rsEventRepository.findById(anyInt())).thenReturn(Optional.of(rsEventDto));
+        ArrayList<TradeDto> tradeDtos = new ArrayList<>();
+        tradeDtos.add(tradeDto);
+        when(tradeRepository.findAllByRsEventDto(any(RsEventDto.class))).thenReturn(tradeDtos);
+        Trade trade = new Trade(11,1);
+        //when
+            rsService.buy(trade,2);
+        // then
+        verify(tradeRepository).save(any());
+    }
+
 
 
 
