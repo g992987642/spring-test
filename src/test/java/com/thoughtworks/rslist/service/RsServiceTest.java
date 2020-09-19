@@ -157,13 +157,28 @@ class RsServiceTest {
         when(tradeRepository.findAllByRsEventDto(any(RsEventDto.class))).thenReturn(new ArrayList<>());
         Trade trade = new Trade(10,1);
         TradeDto tradeDtoInTest = CommonUtils.convertTradeDomainToDto(trade);
-        //when&then
+        //when
         rsService.buy(trade,2);
+        //then
         verify(tradeRepository).save(any());
     }
 
 
-
+    @Test
+    void shouldThrowExceptionWhenAmountIsNotEnough() {
+        // given
+        when(rsEventRepository.findById(anyInt())).thenReturn(Optional.of(rsEventDto));
+        ArrayList<TradeDto> tradeDtos = new ArrayList<>();
+        tradeDtos.add(tradeDto);
+        when(tradeRepository.findAllByRsEventDto(any(RsEventDto.class))).thenReturn(tradeDtos);
+        Trade trade = new Trade(9,1);
+        //when&then
+        assertThrows(
+                RequestNotValidException.class,
+                () -> {
+                    rsService.buy(trade,2);
+                });
+    }
 
 
 
