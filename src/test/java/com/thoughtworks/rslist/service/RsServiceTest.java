@@ -151,7 +151,7 @@ class RsServiceTest {
 
 
     @Test
-    void shouldThrowExceptionWhenNoTradeBofore() {
+    void shouldAddTradeWhenNoTradeBofore() {
         // given
         when(rsEventRepository.findById(anyInt())).thenReturn(Optional.of(rsEventDto));
         when(tradeRepository.findAllByRsEventDto(any(RsEventDto.class))).thenReturn(new ArrayList<>());
@@ -161,6 +161,9 @@ class RsServiceTest {
         rsService.buy(trade,2);
         verify(tradeRepository).save(any());
     }
+
+
+
 
 
 
