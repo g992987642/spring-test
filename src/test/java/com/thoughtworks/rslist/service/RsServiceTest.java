@@ -34,19 +34,12 @@ import static org.mockito.MockitoAnnotations.initMocks;
 class RsServiceTest {
     RsService rsService;
 
-//  @Mock RsEventRepository rsEventRepository;
-//  @Mock UserRepository userRepository;
-//  @Mock VoteRepository voteRepository;
-//  @Mock TradeRepository tradeRepository;
+  @Mock RsEventRepository rsEventRepository;
+  @Mock UserRepository userRepository;
+  @Mock VoteRepository voteRepository;
+  @Mock TradeRepository tradeRepository;
 
-    @Autowired
-    RsEventRepository rsEventRepository;
-    @Autowired
-    UserRepository userRepository;
-    @Autowired
-    VoteRepository voteRepository;
-    @Autowired
-    TradeRepository tradeRepository;
+
 
     LocalDateTime localDateTime;
     Vote vote;
@@ -113,58 +106,8 @@ class RsServiceTest {
     }
 
 
-    @Test
-    void should_return_empty_list() {
-
-        UserDto userDto =
-                UserDto.builder()
-                        .voteNum(5)
-                        .phone("18888888888")
-                        .gender("female")
-                        .email("a@b.com")
-                        .age(19)
-                        .userName("xiaoli")
-                        .id(1)
-                        .build();
-        RsEventDto rsEventDto =
-                RsEventDto.builder()
-                        .eventName("event name")
-                        .id(2)
-                        .keyword("keyword")
-                        .voteNum(2)
-                        .user(userDto)
-                        .build();
-        RsEventDto rsEventDto2 =
-                RsEventDto.builder()
-                        .eventName("event name2")
-                        .id(3)
-                        .keyword("keyword2")
-                        .voteNum(3)
-                        .user(userDto)
-                        .build();
-        TradeDto tradeDto = TradeDto.builder()
-                .amount(10)
-                .rank(1)
-                .timestamp(new Timestamp(System.currentTimeMillis()))
-                .rsEventDto(rsEventDto)
-                .id(4)
-                .build();
-
-        TradeDto tradeDto2 = TradeDto.builder()
-                .amount(9)
-                .rank(1)
-                .timestamp(new Timestamp(System.currentTimeMillis()))
-                .rsEventDto(rsEventDto)
-                .id(5)
-                .build();
-        Trade trade2 = CommonUtils.converDtoToDomain(tradeDto2);
-
-        userRepository.save(userDto);
-        rsEventRepository.save(rsEventDto);
-        rsEventRepository.save(rsEventDto2);
-        tradeRepository.save(tradeDto);
-        rsService.buy(trade2, 2);
 
 
-    }
+
+
 }
