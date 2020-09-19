@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "vote")
+@Table(name = "trade")
 public class TradeDto {
 
     @Id
@@ -25,15 +25,11 @@ public class TradeDto {
     private Timestamp timestamp;
 
     private int rank;
+    private int amount;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
-    private UserDto userDto;
-
-    @ManyToOne
-    @JoinColumn(name = "rs_event_id")
+    @JoinColumn(name = "rsEvent_id")
     private RsEventDto rsEventDto;
-
 
 }
 
