@@ -21,11 +21,13 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -141,12 +143,24 @@ class RsServiceTest {
         Trade trade = CommonUtils.converTradeDtoToDomain(tradeDto);
         //when&then
         assertThrows(
-                RuntimeException.class,
+                RequestNotValidException.class,
                 () -> {
                     rsService.buy(trade,1);
                 });
     }
 
+
+    @Test
+    void shouldThrowExceptionWhenNoTradeBofore() {
+        // given
+        when(rsEventRepository.findById(anyInt())).thenReturn(Optional.of(rsEventDto));
+        when(tradeRepository.findAllByRsEventDto(any(RsEventDto.class))).thenReturn(new ArrayList<>());
+        Trade trade = new Trade(10,1);
+        TradeDto tradeDtoInTest = CommonUtils.convertTradeDomainToDto(trade);
+        //when&then
+        rsService.buy(trade,2);
+        verify(tradeRepository).save(any());
+    }
 
 
 
