@@ -66,7 +66,7 @@ public class RsService {
             throw new RequestNotValidException("RsEvent not exist");
         }
         List<TradeDto> allTrade = tradeRepository.findAllByRsEventDto(rsEventDtoOptional.get());
-        TradeDto tradeDto = CommonUtils.convertDomainToDto(trade);
+        TradeDto tradeDto = CommonUtils.convertTradeDomainToDto(trade);
         tradeDto.setRsEventDto(rsEventDtoOptional.get());
 
         if(allTrade==null){

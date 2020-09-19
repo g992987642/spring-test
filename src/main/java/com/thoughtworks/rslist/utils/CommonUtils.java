@@ -6,7 +6,7 @@ import com.thoughtworks.rslist.dto.TradeDto;
 import java.sql.Timestamp;
 
 public class CommonUtils {
-    public static TradeDto convertDomainToDto(Trade trade){
+    public static TradeDto convertTradeDomainToDto(Trade trade){
         TradeDto tradeDto=TradeDto.builder()
                 .timestamp(new Timestamp(System.currentTimeMillis()))
                 .rank(trade.getRank())
@@ -15,7 +15,7 @@ public class CommonUtils {
         return tradeDto;
     }
 
-    public static Trade converDtoToDomain(TradeDto tradeDto){
+    public static Trade converTradeDtoToDomain(TradeDto tradeDto){
         Trade trade =Trade.builder()
                 .amount(tradeDto.getAmount())
                 .rank(tradeDto.getRank())
