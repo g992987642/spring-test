@@ -8,6 +8,9 @@ import org.springframework.data.repository.CrudRepository;
 import java.util.List;
 
 public interface TradeRepository extends CrudRepository<TradeDto, Integer> {
-  //  List<TradeDto> findAllByRsEventId(int rsEventId);
+    //  List<TradeDto> findAllByRsEventId(int rsEventId);
     List<TradeDto> findAllByRsEventDto(RsEventDto rsEventDto);
+
+    TradeDto findFirstByRankOrderByAmountDesc(int rank);
+    void deleteByRsEventDto(RsEventDto rsEventDto);
 }

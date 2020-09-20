@@ -113,10 +113,31 @@ class RsControllerTest {
                 .rsEventDto(rsEventDtoForTrade)
                 .id(4)
                 .build();
+
+
+        TradeDto tradeDto2ForTrade = TradeDto.builder()
+                .amount(20)
+                .rank(1)
+                .timestamp(new Timestamp(System.currentTimeMillis()))
+                .rsEventDto(rsEventDtoForTrade)
+                .id(5)
+                .build();
+        TradeDto  tradeDto3ForTrade = TradeDto.builder()
+                .amount(1)
+                .rank(2)
+                .timestamp(new Timestamp(System.currentTimeMillis()))
+                .rsEventDto(rsEventDto2ForTrade)
+                .id(6)
+                .build();
+
+
+
         userRepository.save(userDto);
         rsEventRepository.save(rsEventDtoForTrade);
         rsEventRepository.save(rsEventDto2ForTrade);
         tradeRepository.save(tradeDtoForTrade);
+        tradeRepository.save(tradeDto2ForTrade);
+        tradeRepository.save(tradeDto3ForTrade);
     }
 
     @Test
@@ -279,16 +300,53 @@ class RsControllerTest {
     @Test
     void shouldAddTradeforBuyRsEvent() throws Exception {
         initDataBaseForTrade();
-        Trade trade = new Trade(11, 1);
+        Trade trade = new Trade(21, 1);
         ObjectMapper objectMapper = new ObjectMapper();
         String tradeString = objectMapper.writeValueAsString(trade);
         List<TradeDto> allTradeDtoBeforeBuy = tradeRepository.findAllByRsEventDto(rsEventDtoForTrade);
-        assertEquals(1,allTradeDtoBeforeBuy.size());
+        assertEquals(2,allTradeDtoBeforeBuy.size());
         mockMvc.perform(post("/rs/buy/2").content(tradeString).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
         List<TradeDto> allTradeDtoAfterBuy = tradeRepository.findAllByRsEventDto(rsEventDtoForTrade);
-        assertEquals(2,allTradeDtoAfterBuy.size());
+        assertEquals(3,allTradeDtoAfterBuy.size());
 
     }
+    //TODO 添加一个
+
+    @Test
+    void testRepository(){
+        initDataBaseForTrade();
+       TradeDto tradeDto2ForTrade = TradeDto.builder()
+                .amount(12)
+                .rank(1)
+                .timestamp(new Timestamp(System.currentTimeMillis()))
+                .rsEventDto(rsEventDtoForTrade)
+                .id(5)
+                .build();
+        TradeDto  tradeDto3ForTrade = TradeDto.builder()
+                .amount(1)
+                .rank(2)
+                .timestamp(new Timestamp(System.currentTimeMillis()))
+                .rsEventDto(rsEventDto2ForTrade)
+                .id(6)
+                .build();
+        tradeRepository.save(tradeDto2ForTrade);
+        tradeRepository.save(tradeDto3ForTrade);
+
+        TradeDto oneByRankOrderByAmountDesc = tradeRepository.findFirstByRankOrderByAmountDesc(1);
+
+        System.out.println(oneByRankOrderByAmountDesc.toString());
+    }
+
+    @Test
+    void testRepository2(){
+        initDataBaseForTrade();
+
+
+        TradeDto oneByRankOrderByAmountDesc = tradeRepository.findFirstByRankOrderByAmountDesc(1);
+
+        System.out.println(oneByRankOrderByAmountDesc.toString());
+    }
+
 
 }

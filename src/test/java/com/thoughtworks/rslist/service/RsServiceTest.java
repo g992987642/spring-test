@@ -130,7 +130,7 @@ class RsServiceTest {
         when(userRepository.findById(anyInt())).thenReturn(Optional.empty());
         //when&then
         assertThrows(
-                RequestNotValidException.class,
+                RuntimeException.class,
                 () -> {
                     rsService.vote(vote, 1);
                 });
@@ -154,13 +154,14 @@ class RsServiceTest {
     void shouldAddTradeWhenNoTradeBofore() {
         // given
         when(rsEventRepository.findById(anyInt())).thenReturn(Optional.of(rsEventDto));
-        when(tradeRepository.findAllByRsEventDto(any(RsEventDto.class))).thenReturn(new ArrayList<>());
+        when(tradeRepository.findFirstByRankOrderByAmountDesc(anyInt())).thenReturn(null);
         Trade trade = new Trade(10,1);
         TradeDto tradeDtoInTest = CommonUtils.convertTradeDomainToDto(trade);
         //when
-        rsService.buy(trade,2);
+        rsService.buy(trade,3);
         //then
-        verify(tradeRepository).save(any());
+        verify(tradeRepository).save(any(TradeDto.class));
+        verify(tradeRepository).deleteByRsEventDto(any(RsEventDto.class));
     }
 
 
@@ -168,9 +169,7 @@ class RsServiceTest {
     void shouldThrowExceptionWhenAmountIsNotEnough() {
         // given
         when(rsEventRepository.findById(anyInt())).thenReturn(Optional.of(rsEventDto));
-        ArrayList<TradeDto> tradeDtos = new ArrayList<>();
-        tradeDtos.add(tradeDto);
-        when(tradeRepository.findAllByRsEventDto(any(RsEventDto.class))).thenReturn(tradeDtos);
+        when(tradeRepository.findFirstByRankOrderByAmountDesc(anyInt())).thenReturn(tradeDto);
         Trade trade = new Trade(9,1);
         //when&then
         assertThrows(
@@ -181,17 +180,16 @@ class RsServiceTest {
     }
 
     @Test
-    void shouldAddTrade() {
+    void shouldAddTradeAndDeleteRsEventWhichWasThisRank() {
         // given
         when(rsEventRepository.findById(anyInt())).thenReturn(Optional.of(rsEventDto));
-        ArrayList<TradeDto> tradeDtos = new ArrayList<>();
-        tradeDtos.add(tradeDto);
-        when(tradeRepository.findAllByRsEventDto(any(RsEventDto.class))).thenReturn(tradeDtos);
+        when(tradeRepository.findFirstByRankOrderByAmountDesc(anyInt())).thenReturn(tradeDto);
         Trade trade = new Trade(11,1);
         //when
             rsService.buy(trade,2);
         // then
         verify(tradeRepository).save(any());
+        verify(rsEventRepository).deleteById(tradeDto.getRsEventDto().getId());
     }
 
 

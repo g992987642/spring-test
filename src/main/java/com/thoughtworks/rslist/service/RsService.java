@@ -56,7 +56,8 @@ public class RsService {
         rsEventRepository.save(rsEvent);
     }
 
-    public void buy(Trade trade, int id) {
+
+        public void buy(Trade trade, int id) {
 
         //TODO
 //        如果该排名上热搜已被购买，用户需要花高于当前价格的钱即可买到该位热搜，原热搜将会被替换掉（删除）
@@ -65,20 +66,19 @@ public class RsService {
         if (!rsEventDtoOptional.isPresent()) {
             throw new RequestNotValidException("RsEvent not exist");
         }
-        List<TradeDto> allTrade = tradeRepository.findAllByRsEventDto(rsEventDtoOptional.get());
+
+        TradeDto mostAmountTrade = tradeRepository.findFirstByRankOrderByAmountDesc(trade.getRank());
         TradeDto tradeDto = CommonUtils.convertTradeDomainToDto(trade);
         tradeDto.setRsEventDto(rsEventDtoOptional.get());
-
-        if(allTrade==null){
+        if(mostAmountTrade==null){
+            //如果原来在高位，后来又被买到低位，需要先清除原来的购买记录
+            tradeRepository.deleteByRsEventDto(rsEventDtoOptional.get());
             tradeRepository.save(tradeDto);
         }else{
-            AtomicBoolean amoutIsEnough= new AtomicBoolean(true);
-            allTrade.stream().forEach(e->{
-                if(trade.getAmount()<e.getAmount()){
-                    amoutIsEnough.set(false);
-                }
-            });
-            if(amoutIsEnough.get()){
+            if(trade.getAmount()>mostAmountTrade.getAmount()){
+                //需要删除原来排名所在的热搜
+                int mostAmountTradeId = mostAmountTrade.getRsEventDto().getId();
+                    rsEventRepository.deleteById(mostAmountTradeId);
                 tradeRepository.save(tradeDto);
             }else{
                 throw new RequestNotValidException("amount not enough");
