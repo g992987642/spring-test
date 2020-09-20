@@ -180,13 +180,27 @@ class RsServiceTest {
     }
 
     @Test
-    void shouldAddTradeAndDeleteRsEventWhichWasThisRank() {
+    void shouldAddTradeAndDeleteHistoryTrade() {
         // given
         when(rsEventRepository.findById(anyInt())).thenReturn(Optional.of(rsEventDto));
         when(tradeRepository.findFirstByRankOrderByAmountDesc(anyInt())).thenReturn(tradeDto);
         Trade trade = new Trade(11,1);
         //when
             rsService.buy(trade,2);
+        // then
+        verify(tradeRepository).save(any());
+        verify(tradeRepository).deleteByRsEventDto(rsEventDto);
+    }
+
+    @Test
+    void shouldAddTradeAndDeleteHistoryRsEventWhichWasInThisRank() {
+        // given
+        when(rsEventRepository.findById(anyInt())).thenReturn(Optional.of(rsEventDto));
+        when(tradeRepository.findFirstByRankOrderByAmountDesc(anyInt())).thenReturn(tradeDto);
+
+        Trade trade = new Trade(100,1);
+        //when
+        rsService.buy(trade,3);
         // then
         verify(tradeRepository).save(any());
         verify(rsEventRepository).deleteById(tradeDto.getRsEventDto().getId());
